@@ -10,6 +10,7 @@ import re
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
 from langchain_core.language_models import BaseChatModel
@@ -85,6 +86,13 @@ def get_llm(
             model=model_name,
             base_url=f"{config.llamacpp_base_url}/v1",
             api_key="not-needed",
+            temperature=temperature
+        )
+    elif provider == "groq":
+        logger.info(f"Using Groq model: {model_name}")
+        return ChatGroq(
+            model_name=model_name,
+            groq_api_key=config.groq_api_key,
             temperature=temperature
         )
     else:  # gemini

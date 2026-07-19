@@ -17,7 +17,7 @@ class ResearchConfig(BaseModel):
     # Model Provider Configuration
     model_provider: str = Field(
         default=os.getenv("MODEL_PROVIDER", "gemini"),
-        description="Model provider: 'gemini', 'ollama', 'openai', or 'llamacpp'"
+        description="Model provider: 'gemini', 'ollama', 'openai', 'llamacpp', or 'groq'"
     )
     
     # API Keys
@@ -29,6 +29,11 @@ class ResearchConfig(BaseModel):
     openai_api_key: str = Field(
         default_factory=lambda: os.getenv("OPENAI_API_KEY", ""),
         description="OpenAI API key (required if using OpenAI)"
+    )
+
+    groq_api_key: str = Field(
+        default_factory=lambda: os.getenv("GROQ_API_KEY", ""),
+        description="Groq API key (required if using Groq)"
     )
 
     openai_base_url: str = Field(
@@ -149,8 +154,13 @@ class ResearchConfig(BaseModel):
                     raise ValueError(f"llama.cpp server not accessible at {self.llamacpp_base_url}")
             except requests.exceptions.RequestException as e:
                 raise ValueError(f"Cannot connect to llama.cpp server at {self.llamacpp_base_url}: {e}")
+        elif self.model_provider == "groq":
+            if not self.groq_api_key:
+                raise ValueError(
+                    "GROQ_API_KEY is required when using Groq. Get one from https://console.groq.com/keys"
+                )
         else:
-            raise ValueError(f"Invalid MODEL_PROVIDER: {self.model_provider}. Must be 'gemini', 'ollama', 'openai', or 'llamacpp'")
+            raise ValueError(f"Invalid MODEL_PROVIDER: {self.model_provider}. Must be 'gemini', 'ollama', 'openai', 'llamacpp', or 'groq'")
         
         return True
 
