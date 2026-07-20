@@ -113,8 +113,8 @@ https://github.com/user-attachments/assets/df8404c6-7423-4a49-864a-bd4d59885c1b
 
 ```bash
 # Clone the repository
-git clone https://github.com/tarun7r/deep-research-agent.git
-cd deep-research-agent
+git clone https://github.com/tarun7r/Veritas-AI.git
+cd Veritas-AI
 
 # Create virtual environment
 python -m venv .venv
@@ -301,7 +301,7 @@ CITATION_STYLE=apa                 # Options: apa, mla, chicago, ieee
 ## Project Structure
 
 ```
-deep-research-agent/
+Veritas-AI/
 ├── src/
 │   ├── __init__.py           # Package initialization
 │   ├── config.py             # Configuration management (Pydantic)
@@ -553,9 +553,4 @@ Supports:
 
 ---
 
-## Contact
 
-- **GitHub**: [tarun7r](https://github.com/tarun7r)
-- **LinkedIn**: [Tarun Sai Goddu](https://www.linkedin.com/in/tarunsaigoddu/)
-- **Hugging Face**: [tarun7r](https://huggingface.co/tarun7r)
-- **Email**: tarunsaiaa@gmail.com

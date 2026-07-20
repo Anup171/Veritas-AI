@@ -1,5 +1,5 @@
 [project]
-name = "deep-research-agent"
+name = "Veritas-AI"
 version = "0.1.0"
 description = "An efficient deep research agent using LangGraph with free tools"
 requires-python = ">=3.11"
@@ -36,4 +36,10 @@ target-version = ['py311']
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+
+[tool.pyright]
+extraPaths = ["."]
+executionEnvironments = [
+  { root = "." }
+]
 

@@ -120,7 +120,7 @@ class ResearchConfig(BaseModel):
     )
     
     langsmith_project: str = Field(
-        default=os.getenv("LANGCHAIN_PROJECT", "deep-research-agent"),
+        default=os.getenv("LANGCHAIN_PROJECT", "Veritas-AI"),
         description="LangSmith project name"
     )
     
