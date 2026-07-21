@@ -1,6 +1,6 @@
-# 🔬 Deep Research Agent
+# Veritas-AI
 
-Welcome to the Deep Research Agent! 
+Welcome to the Veritas-AI
 
 This autonomous multi-agent system uses advanced LLMs to conduct deep, citation-backed research on any topic you give it.
 

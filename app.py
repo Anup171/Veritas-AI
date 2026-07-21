@@ -65,11 +65,11 @@ class EnhancedProgressDisplay:
     """Modern progress display with animated visuals."""
     
     def __init__(self):
-        self.message: cl.Message = None
+        self.message: Optional[cl.Message] = None
         self.step_messages: dict = {}  # Track individual step messages
         self.updates: list[ProgressUpdate] = []
         self.current_stage: ResearchStage = ResearchStage.INITIALIZING
-        self.start_time: datetime = None
+        self.start_time: Optional[datetime] = None
         self.topic: str = ""
         
     async def initialize(self, topic: str):
@@ -274,16 +274,12 @@ async def start():
     ]
     
     welcome_content = f"""
-# Deep Research Agent
+## Veritas AI   
 
 **Transform questions into comprehensive, well-sourced research reports.**
-
 I analyze your research topic, search authoritative sources across the web, evaluate source credibility, synthesize key findings, and generate professional reports with proper citations all in minutes.
 
----
-
 ## What I Do
-
 | Step | Description |
 |------|-------------|
 | **Plan** | Create strategic research objectives and search queries |
@@ -292,12 +288,8 @@ I analyze your research topic, search authoritative sources across the web, eval
 | **Synthesize** | Analyze and cross-reference findings with AI |
 | **Write** | Generate a comprehensive, cited report |
 
----
-
 ## Quick Start
-
 Click a topic below or type your own research question:
-
 """
     
     await cl.Message(
@@ -310,21 +302,25 @@ Click a topic below or type your own research question:
 async def on_example_quantum(action: cl.Action):
     """Handle quantum computing example."""
     topic = action.payload.get("topic")
-    await start_research(topic)
+    if topic is not None:
+        # We need to pass a string to start_research
+        await start_research(str(topic))
 
 
 @cl.action_callback("example_ai")
 async def on_example_ai(action: cl.Action):
     """Handle AI agents example."""
     topic = action.payload.get("topic")
-    await start_research(topic)
+    if topic is not None:
+        await start_research(str(topic))
 
 
 @cl.action_callback("example_climate")
 async def on_example_climate(action: cl.Action):
     """Handle climate tech example."""
     topic = action.payload.get("topic")
-    await start_research(topic)
+    if topic is not None:
+        await start_research(str(topic))
 
 
 @cl.action_callback("show_history")
@@ -489,7 +485,10 @@ MODEL_NAME=gemini-2.5-flash
         return
     
     # Increment research count
-    count = cl.user_session.get("research_count", 0) + 1
+    current_count = cl.user_session.get("research_count")
+    if not isinstance(current_count, int):
+        current_count = 0
+    count = current_count + 1
     cl.user_session.set("research_count", count)
     
     # Show configuration summary
