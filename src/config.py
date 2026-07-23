@@ -54,12 +54,12 @@ class ResearchConfig(BaseModel):
     
     # Model Configuration
     model_name: str = Field(
-        default=os.getenv("MODEL_NAME", "gemini-2.5-flash"),
+        default=os.getenv("MODEL_NAME", "gemini-3.5-flash"),
         description="Model to use for research and generation"
     )
     
     summarization_model: str = Field(
-        default=os.getenv("SUMMARIZATION_MODEL", "gemini-2.5-flash"),
+        default=os.getenv("SUMMARIZATION_MODEL", "gemini-3.5-flash"),
         description="Model for summarizing search results (faster/cheaper)"
     )
     
@@ -133,8 +133,8 @@ class ResearchConfig(BaseModel):
                 )
         elif self.model_provider == "ollama":
             # Validate Ollama is accessible
+            import requests
             try:
-                import requests
                 response = requests.get(f"{self.ollama_base_url}/api/tags", timeout=5)
                 if response.status_code != 200:
                     raise ValueError(f"Ollama server not accessible at {self.ollama_base_url}")
@@ -147,8 +147,8 @@ class ResearchConfig(BaseModel):
                 )
         elif self.model_provider == "llamacpp":
             # Validate llama.cpp server is accessible
+            import requests
             try:
-                import requests
                 response = requests.get(f"{self.llamacpp_base_url}/health", timeout=5)
                 if response.status_code not in [200, 404]:  # 404 is ok, means server is running but no health endpoint
                     raise ValueError(f"llama.cpp server not accessible at {self.llamacpp_base_url}")
