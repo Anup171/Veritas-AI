@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.checkpoint.sqlite import SqliteSaver
+from langchain_core.runnables import RunnableConfig
 
 from src.state import ResearchState
 from src.agents import ResearchPlanner, ResearchSearcher, ResearchSynthesizer, ReportWriter
@@ -200,12 +201,12 @@ async def run_research(
     
     initial_state = ResearchState(research_topic=topic)
     
-    run_config: Dict[str, Any] = {}
+    run_config: Optional[RunnableConfig] = None
     
     if use_checkpoints:
         checkpointer = create_memory_checkpointer()
         tid = thread_id or f"research-{uuid.uuid4().hex[:8]}"
-        run_config["configurable"] = {"thread_id": tid}
+        run_config = {"configurable": {"thread_id": tid}}
         logger.info(f"Using thread_id: {tid} for checkpoint tracking")
     else:
         checkpointer = None
@@ -213,10 +214,10 @@ async def run_research(
     graph = create_research_graph(checkpointer=checkpointer)
     
     try:
-        final_state = await graph.ainvoke(initial_state, config=run_config if run_config else None)
+        final_state = await graph.ainvoke(initial_state, config=run_config)
     except Exception as e:
         logger.error(f"Research workflow failed: {e}")
-        if run_config.get("configurable", {}).get("thread_id"):
+        if run_config and run_config.get("configurable", {}).get("thread_id"):
             logger.info(f"Thread ID was: {run_config['configurable']['thread_id']}")
         raise
     
@@ -262,7 +263,7 @@ async def run_research_with_persistence(
     initial_state = ResearchState(research_topic=topic)
     
     tid = thread_id or f"research-{uuid.uuid4().hex[:8]}"
-    run_config = {"configurable": {"thread_id": tid}}
+    run_config: RunnableConfig = {"configurable": {"thread_id": tid}}
     logger.info(f"Using thread_id: {tid} for persistent checkpoint tracking")
     
     with create_sqlite_checkpointer() as checkpointer:
@@ -301,7 +302,7 @@ async def resume_research(
     """
     logger.info(f"Resuming research with thread_id: {thread_id}")
     
-    run_config = {"configurable": {"thread_id": thread_id}}
+    run_config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
     
     with create_sqlite_checkpointer() as checkpointer:
         graph = create_research_graph(checkpointer=checkpointer)
@@ -327,7 +328,7 @@ async def get_workflow_state(thread_id: str) -> Optional[Dict[str, Any]]:
     Returns:
         Current state dict or None if not found
     """
-    run_config = {"configurable": {"thread_id": thread_id}}
+    run_config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
     
     with create_sqlite_checkpointer() as checkpointer:
         graph = create_research_graph(checkpointer=checkpointer)
