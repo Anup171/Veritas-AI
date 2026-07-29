@@ -91,7 +91,7 @@ def get_llm(
     elif provider == "groq":
         logger.info(f"Using Groq model: {model_name}")
         return ChatGroq(
-            model_name=model_name,
+            model=model_name,
             groq_api_key=config.groq_api_key,
             temperature=temperature
         )

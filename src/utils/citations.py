@@ -1,6 +1,6 @@
 """Citation formatting utilities for different citation styles."""
 
-from typing import List, Dict
+from typing import List, Dict, Optional
 from datetime import datetime
 import re
 import logging
@@ -54,7 +54,7 @@ class CitationFormatter:
         self,
         urls: List[str],
         style: str = 'apa',
-        search_results: List = None
+        search_results: Optional[List] = None
     ) -> str:
         """Format a references section in the specified style.
         
@@ -105,7 +105,7 @@ class CitationFormatter:
         self,
         report_content: str,
         style: str = 'apa',
-        search_results: List = None
+        search_results: Optional[List] = None
     ) -> str:
         """Update citations in a report to use specified style.
         

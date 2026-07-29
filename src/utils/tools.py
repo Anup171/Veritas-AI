@@ -1,6 +1,6 @@
 """LLM-invokable tools for research agents."""
 
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from langchain_core.tools import tool
 import logging
 import json
@@ -10,6 +10,7 @@ from src.utils.web_utils import (
     ContentExtractor as ContentExtractorImpl,
     DuckDuckGoProvider,
     TavilyProvider,
+    SearchProvider,
 )
 from src.state import SearchResult
 from src.utils.citations import CitationFormatter
@@ -20,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 # Initialize tool implementations with config values
-def _build_search_providers():
+def _build_search_providers() -> list[SearchProvider]:
     """Build the search providers list based on config.search_provider."""
     if config.search_provider == "tavily":
         return [TavilyProvider(api_key=config.tavily_api_key or None,
@@ -38,7 +39,7 @@ _citation_formatter = CitationFormatter()
 
 
 @tool
-async def web_search(query: str, max_results: int = None) -> List[dict]:
+async def web_search(query: str, max_results: int | None = None) -> List[dict]:
     """Search the web for authoritative information using DuckDuckGo search engine.
     
     This tool executes web searches to find current, accurate information from diverse sources
@@ -485,7 +486,7 @@ def format_citation(url: str, title: str = "", style: str = "apa") -> str:
 
 
 @tool
-def validate_section_quality(section_text: str, min_words: int = 150) -> Dict[str, any]:
+def validate_section_quality(section_text: str, min_words: int = 150) -> Dict[str, Any]:
     """Validate a report section against quality standards before finalizing.
     
     This tool performs comprehensive quality checks on written sections to ensure
