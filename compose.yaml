@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+    image: deep-research-agent:dev
+
+    # Bind only to this computer. Open http://localhost:8000 after startup.
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    # API keys and provider settings remain on the host and are injected only
+    # when the container starts.
+    env_file:
+      - .env
+    environment:
+      # When MODEL_PROVIDER=ollama, localhost inside the container is not the
+      # Windows host. Override with OLLAMA_DOCKER_BASE_URL when needed.
+      OLLAMA_BASE_URL: ${OLLAMA_DOCKER_BASE_URL:-http://host.docker.internal:11434}
+
+    volumes:
+      # Generated reports remain directly available in the project folder.
+      - type: bind
+        source: ./outputs
+        target: /app/outputs
+      # Docker manages cache and checkpoint data independently of containers.
+      - type: volume
+        source: research-cache
+        target: /app/.cache
+
+volumes:
+  research-cache:

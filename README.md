@@ -193,6 +193,44 @@ python main.py "Impact of quantum computing on cryptography"
 chainlit run app.py --host 127.0.0.1 --port 8000
 ```
 
+### Docker (Local)
+
+Docker Desktop with Linux containers/WSL 2 is required. The Compose setup builds
+the app, injects provider configuration from the local `.env` file, keeps
+reports in `outputs/`, and persists cache/checkpoint data in a Docker volume.
+
+```bash
+# Build the image, then start the Chainlit app in the background
+docker compose build
+docker compose up -d
+
+# Open http://localhost:8000 in a browser.
+# In a separate terminal, view application logs if needed.
+docker compose logs -f app
+
+# Stop the app and remove its container/network. The reports directory and
+# research-cache volume are retained.
+docker compose down
+
+# Start it again and confirm the previous reports and research history remain.
+docker compose up -d
+```
+
+At startup, the unprivileged application account writes and removes a small
+probe file in both mounted paths. Startup stops with a clear error if either
+path is not writable. After generating a report, confirm it remains in
+`outputs/` after the restart; the `.cache` volume retains research cache and
+history. To confirm no local credentials were baked into the image, run:
+
+```bash
+docker run --rm --entrypoint sh deep-research-agent:dev -c 'test ! -e /app/.env'
+```
+
+The image never includes `.env`. Keep that file private and out of version
+control. For a Windows-hosted Ollama server, the Compose configuration uses
+`host.docker.internal`; optionally set `OLLAMA_DOCKER_BASE_URL` in `.env` to
+override its address for Docker only.
+
 Features:
 - Real-time progress with stage indicators
 - Quality metrics and LLM usage statistics
