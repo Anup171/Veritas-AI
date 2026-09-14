@@ -263,37 +263,38 @@ class ResearchSearcher:
             try:
                 start_time = time.time()
                 
-                objectives_text = "\n".join(f"- {obj}" for obj in state.plan.objectives)
-                queries_text = "\n".join(
-                    f"- {q.query} (Purpose: {q.purpose})" 
+                from src.utils.tools import _search_impl, _extractor_impl
+                
+                search_tasks = [
+                    _search_impl.search_async(q.query)
                     for q in state.plan.search_queries
-                )
+                ]
+                results_nested = await asyncio.gather(*search_tasks, return_exceptions=True)
                 
-                input_message = SEARCHER_USER_TEMPLATE.format(
-                    topic=state.research_topic,
-                    objectives=objectives_text,
-                    queries=queries_text,
-                    min_sources=expected_total_results
-                )
+                search_results = []
+                seen_urls = set()
+                for res_list in results_nested:
+                    if isinstance(res_list, list):
+                        for r in res_list:
+                            if hasattr(r, 'url') and r.url and r.url not in seen_urls:
+                                seen_urls.add(r.url)
+                                search_results.append(r)
                 
-                input_tokens = estimate_tokens(input_message)
-                
-                result = await agent_graph.ainvoke({
-                    "messages": [{"role": "user", "content": input_message}]
-                })
+                max_urls_to_extract = config.max_search_results_per_query * len(state.plan.search_queries)
+                extraction_tasks = [
+                    _extractor_impl.extract_content_async(r.url)
+                    for r in search_results[:max_urls_to_extract]
+                ]
+                extracted_contents = await asyncio.gather(*extraction_tasks, return_exceptions=True)
+                for r, content in zip(search_results[:max_urls_to_extract], extracted_contents):
+                    if isinstance(content, str) and content:
+                        r.content = content
                 
                 duration = time.time() - start_time
+                input_tokens = 0
+                output_tokens = 0
                 
-                messages = result.get('messages', [])
-                output_text = ""
-                if messages:
-                    output_text = str(messages[-1].content if hasattr(messages[-1], 'content') else str(messages[-1]))
-                
-                output_tokens = estimate_tokens(output_text)
-                
-                search_results = self._extract_results_from_messages(messages)
-                
-                logger.info(f"Autonomous agent collected {len(search_results)} results")
+                logger.info(f"Direct parallel search collected {len(search_results)} results in {duration:.2f}s")
                 
                 total_extracted_chars = sum(
                     len(r.content) if r.content else 0 
@@ -304,8 +305,8 @@ class ResearchSearcher:
                 await emit_extraction_complete(extracted_count, total_extracted_chars)
                 
                 if not search_results:
-                    await emit_error("Agent did not collect any search results")
-                    raise SearchError("Agent did not collect any search results")
+                    await emit_error("Search did not collect any results")
+                    raise SearchError("Search did not collect any results")
             
                 scored_results = self.credibility_scorer.score_search_results(search_results)
                 
@@ -454,18 +455,16 @@ class ResearchSynthesizer:
                 
                 input_tokens = estimate_tokens(input_message)
                 
-                result = await agent_graph.ainvoke({
-                    "messages": [{"role": "user", "content": input_message}]
-                })
+                prompt = ChatPromptTemplate.from_messages([
+                    ("system", SYNTHESIZER_SYSTEM_PROMPT),
+                    ("human", "{input}")
+                ])
+                chain = prompt | self.llm | StrOutputParser()
+                output_text = await chain.ainvoke({"input": input_message})
+                if not isinstance(output_text, str):
+                    output_text = str(output_text)
                 
                 duration = time.time() - start_time
-                
-                messages = result.get('messages', [])
-                output_text = ""
-                if messages:
-                    last_msg = messages[-1]
-                    output_text = str(last_msg.content if hasattr(last_msg, 'content') else str(last_msg))
-                
                 output_tokens = estimate_tokens(output_text)
                 
                 call_detail = {
@@ -605,17 +604,17 @@ class ReportWriter:
         for attempt in range(self.max_retries):
             try:
                 report_sections = []
-                total_sections = len(state.plan.report_outline)
-                
-                for section_idx, section_title in enumerate(state.plan.report_outline, 1):
-                    await emit_writing_section(section_title, section_idx, total_sections)
-                    
-                    section, section_tokens = await self._write_section(
+                tasks = [
+                    self._write_section(
                         state.research_topic,
                         section_title,
                         state.key_findings,
                         state.search_results
                     )
+                    for section_title in state.plan.report_outline
+                ]
+                results = await asyncio.gather(*tasks)
+                for section, section_tokens in results:
                     if section:
                         report_sections.append(section)
                         if section_tokens:

@@ -34,7 +34,7 @@ _search_impl = WebSearchImpl(
     max_results=config.max_search_results_per_query,
     providers=_build_search_providers(),
 )
-_extractor_impl = ContentExtractorImpl(timeout=10)
+_extractor_impl = ContentExtractorImpl(timeout=10, max_content_length=2500)
 _citation_formatter = CitationFormatter()
 
 

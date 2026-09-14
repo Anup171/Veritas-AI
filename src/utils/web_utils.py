@@ -410,7 +410,7 @@ class ContentExtractor:
         '[role="navigation"]', '[role="complementary"]'
     ]
     
-    def __init__(self, timeout: int = 15, max_content_length: int = 8000):
+    def __init__(self, timeout: int = 10, max_content_length: int = 2500):
         self.timeout = timeout
         self.max_content_length = max_content_length
         self.client_manager = HTTPClientManager.get_instance()
