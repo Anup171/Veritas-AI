@@ -391,7 +391,7 @@ async def on_download_md(action: cl.Action):
     """Handle markdown download."""
     file_path = action.payload.get("path")
     if file_path and Path(file_path).exists():
-        elements = [cl.File(name=Path(file_path).name, path=file_path, display="inline")]
+        elements = [cl.File(name=Path(file_path).name, path=file_path, display="inline", mime="text/markdown")]
         await cl.Message(content="**Markdown Report:**", elements=elements).send()
 
 
@@ -400,7 +400,7 @@ async def on_download_html(action: cl.Action):
     """Handle HTML download."""
     file_path = action.payload.get("path")
     if file_path and Path(file_path).exists():
-        elements = [cl.File(name=Path(file_path).name, path=file_path, display="inline")]
+        elements = [cl.File(name=Path(file_path).name, path=file_path, display="inline", mime="text/html")]
         await cl.Message(content="**HTML Report:**", elements=elements).send()
 
 
@@ -409,7 +409,7 @@ async def on_download_txt(action: cl.Action):
     """Handle TXT download."""
     file_path = action.payload.get("path")
     if file_path and Path(file_path).exists():
-        elements = [cl.File(name=Path(file_path).name, path=file_path, display="inline")]
+        elements = [cl.File(name=Path(file_path).name, path=file_path, display="inline", mime="text/plain")]
         await cl.Message(content="**Plain Text Report:**", elements=elements).send()
 
 
