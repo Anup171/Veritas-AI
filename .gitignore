@@ -18,6 +18,5 @@ venv/
 
 # Project
 .cache/
-.chainlit/
 .files/
 outputs/
