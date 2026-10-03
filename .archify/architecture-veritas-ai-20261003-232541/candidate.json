@@ -1,0 +1,409 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "VeritasAI Runtime Architecture",
+    "output": ".archify/architecture-veritas-ai-20261003-232541/veritas-ai.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Anup171/Veritas-AI.git",
+      "provider": "github",
+      "revision": "0fc36bb8b4dc6ccf77b4be0c313a2ed845e1f3af"
+    }
+  },
+  "components": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "Researcher / User",
+      "sublabel": "Browser Client",
+      "pos": [40, 260],
+      "size": [140, 60],
+      "icon": "person",
+      "sources": [
+        { "path": "app.py", "line": 240, "end_line": 298, "label": "cl.on_chat_start" }
+      ]
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Chainlit Web UI",
+      "sublabel": "app.py :8000",
+      "tag": "WebSocket + SSE",
+      "pos": [40, 420],
+      "size": [140, 60],
+      "icon": "frontend",
+      "sources": [
+        { "path": "app.py", "line": 64, "end_line": 206, "label": "EnhancedProgressDisplay" }
+      ]
+    },
+    {
+      "id": "history",
+      "type": "database",
+      "label": "Research History",
+      "sublabel": ".cache/research_history.json",
+      "tag": "JSON Log",
+      "pos": [40, 580],
+      "size": [140, 60],
+      "icon": "database",
+      "sources": [
+        { "path": "src/utils/history.py", "line": 12, "end_line": 64, "label": "ResearchHistory store" }
+      ]
+    },
+    {
+      "id": "config",
+      "type": "security",
+      "label": "Config & API Keys",
+      "sublabel": "src/config.py (.env)",
+      "tag": "Pydantic Settings",
+      "pos": [250, 100],
+      "size": [150, 60],
+      "icon": "security",
+      "sources": [
+        { "path": "src/config.py", "line": 14, "end_line": 165, "label": "ResearchConfig validation" }
+      ]
+    },
+    {
+      "id": "server",
+      "type": "backend",
+      "label": "Chainlit App Server",
+      "sublabel": "app.py session runner",
+      "pos": [250, 260],
+      "size": [150, 60],
+      "icon": "backend",
+      "sources": [
+        { "path": "app.py", "line": 213, "end_line": 235, "label": "run_research_with_updates" }
+      ]
+    },
+    {
+      "id": "graph",
+      "type": "backend",
+      "label": "LangGraph Engine",
+      "sublabel": "StateGraph workflow",
+      "tag": "ResearchState",
+      "pos": [250, 420],
+      "size": [150, 60],
+      "icon": "backend",
+      "sources": [
+        { "path": "src/graph.py", "line": 65, "end_line": 168, "label": "create_research_graph" }
+      ]
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "Research Cache",
+      "sublabel": ".cache/research/",
+      "tag": "MD5 Hash (7d TTL)",
+      "pos": [250, 580],
+      "size": [150, 60],
+      "icon": "database",
+      "sources": [
+        { "path": "src/utils/cache.py", "line": 13, "end_line": 77, "label": "ResearchCache file store" }
+      ]
+    },
+    {
+      "id": "llm_apis",
+      "type": "external",
+      "label": "LLM Providers",
+      "sublabel": "Gemini / Groq / OpenAI",
+      "tag": "HTTPS APIs",
+      "pos": [480, 260],
+      "size": [150, 60],
+      "icon": "cloud",
+      "sources": [
+        { "path": "src/agents.py", "line": 49, "end_line": 105, "label": "get_llm multi-provider factory" }
+      ]
+    },
+    {
+      "id": "sqlite",
+      "type": "database",
+      "label": "SQLite Checkpointer",
+      "sublabel": ".cache/checkpoints/",
+      "tag": "SqliteSaver",
+      "pos": [480, 580],
+      "size": [150, 60],
+      "icon": "database",
+      "sources": [
+        { "path": "src/graph.py", "line": 47, "end_line": 59, "label": "SqliteSaver checkpoints" }
+      ]
+    },
+    {
+      "id": "planner",
+      "type": "backend",
+      "label": "Research Planner",
+      "sublabel": "Strategy & queries",
+      "pos": [700, 100],
+      "size": [150, 60],
+      "icon": "backend",
+      "sources": [
+        { "path": "src/agents.py", "line": 111, "end_line": 210, "label": "ResearchPlanner.plan" }
+      ]
+    },
+    {
+      "id": "searcher",
+      "type": "backend",
+      "label": "Research Searcher",
+      "sublabel": "Autonomous search",
+      "pos": [700, 260],
+      "size": [150, 60],
+      "icon": "backend",
+      "sources": [
+        { "path": "src/agents.py", "line": 217, "end_line": 320, "label": "ResearchSearcher.search" }
+      ]
+    },
+    {
+      "id": "synthesizer",
+      "type": "backend",
+      "label": "Synthesizer Agent",
+      "sublabel": "Key findings analysis",
+      "pos": [700, 420],
+      "size": [150, 60],
+      "icon": "backend",
+      "sources": [
+        { "path": "src/agents.py", "line": 420, "end_line": 512, "label": "ResearchSynthesizer.synthesize" }
+      ]
+    },
+    {
+      "id": "writer",
+      "type": "backend",
+      "label": "Report Writer",
+      "sublabel": "Cited report drafting",
+      "tag": "APA / MLA style",
+      "pos": [700, 580],
+      "size": [150, 60],
+      "icon": "backend",
+      "sources": [
+        { "path": "src/agents.py", "line": 620, "end_line": 670, "label": "ReportWriter.write_report" }
+      ]
+    },
+    {
+      "id": "async_io",
+      "type": "backend",
+      "label": "Async IO Engine",
+      "sublabel": "asyncio.gather",
+      "tag": "Concurrent Worker",
+      "pos": [970, 260],
+      "size": [150, 60],
+      "icon": "active",
+      "sources": [
+        { "path": "src/agents.py", "line": 268, "end_line": 292, "label": "Parallel search and scraping" }
+      ]
+    },
+    {
+      "id": "exports",
+      "type": "database",
+      "label": "Report Exporter",
+      "sublabel": "./outputs/*.md, .html",
+      "tag": "ReportExporter",
+      "pos": [970, 580],
+      "size": [150, 60],
+      "icon": "database",
+      "sources": [
+        { "path": "src/utils/exports.py", "line": 12, "end_line": 56, "label": "ReportExporter" }
+      ]
+    },
+    {
+      "id": "search_apis",
+      "type": "external",
+      "label": "Search Providers",
+      "sublabel": "DuckDuckGo / Tavily",
+      "tag": "Search APIs",
+      "pos": [1210, 200],
+      "size": [150, 60],
+      "icon": "external",
+      "sources": [
+        { "path": "src/utils/tools.py", "line": 24, "end_line": 36, "label": "DuckDuckGo & Tavily providers" }
+      ]
+    },
+    {
+      "id": "web_targets",
+      "type": "external",
+      "label": "Target Web Servers",
+      "sublabel": "httpx crawler",
+      "tag": "Public HTTP/2",
+      "pos": [1210, 320],
+      "size": [150, 60],
+      "icon": "external",
+      "sources": [
+        { "path": "src/utils/tools.py", "line": 132, "end_line": 200, "label": "extract_webpage_content" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Docker Container (python:3.11-slim)",
+      "wraps": ["server", "graph", "planner", "searcher", "synthesizer", "writer", "async_io"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Persistent Storage & Host Config",
+      "wraps": ["config", "history", "cache", "sqlite", "exports"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "client-to-ui",
+      "from": "client",
+      "to": "ui",
+      "label": "HTTPS :8000",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ui-to-server",
+      "from": "ui",
+      "to": "server",
+      "label": "chat & action events"
+    },
+    {
+      "id": "config-to-server",
+      "from": "config",
+      "to": "server",
+      "label": "validate .env",
+      "variant": "security"
+    },
+    {
+      "id": "config-to-llm",
+      "from": "config",
+      "to": "llm_apis",
+      "label": "API keys",
+      "variant": "security"
+    },
+    {
+      "id": "server-to-graph",
+      "from": "server",
+      "to": "graph",
+      "label": "ainvoke(state)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "graph-to-planner",
+      "from": "graph",
+      "to": "planner",
+      "label": "START -> plan"
+    },
+    {
+      "id": "planner-to-searcher",
+      "from": "planner",
+      "to": "searcher",
+      "label": "search_queries"
+    },
+    {
+      "id": "searcher-to-synthesizer",
+      "from": "searcher",
+      "to": "synthesizer",
+      "label": "search_results"
+    },
+    {
+      "id": "synthesizer-to-writer",
+      "from": "synthesizer",
+      "to": "writer",
+      "label": "key_findings"
+    },
+    {
+      "id": "planner-to-llm",
+      "from": "planner",
+      "to": "llm_apis",
+      "label": "generate plan"
+    },
+    {
+      "id": "synthesizer-to-llm",
+      "from": "synthesizer",
+      "to": "llm_apis",
+      "label": "extract insights"
+    },
+    {
+      "id": "writer-to-llm",
+      "from": "writer",
+      "to": "llm_apis",
+      "label": "draft sections"
+    },
+    {
+      "id": "searcher-to-async",
+      "from": "searcher",
+      "to": "async_io",
+      "label": "asyncio.gather()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "async-to-search",
+      "from": "async_io",
+      "to": "search_apis",
+      "label": "query DDG / Tavily"
+    },
+    {
+      "id": "async-to-web",
+      "from": "async_io",
+      "to": "web_targets",
+      "label": "extract HTML"
+    },
+    {
+      "id": "graph-to-sqlite",
+      "from": "graph",
+      "to": "sqlite",
+      "label": "save checkpoint",
+      "variant": "dashed"
+    },
+    {
+      "id": "server-to-cache",
+      "from": "server",
+      "to": "cache",
+      "label": "7d TTL cache",
+      "variant": "dashed"
+    },
+    {
+      "id": "server-to-history",
+      "from": "server",
+      "to": "history",
+      "label": "append history",
+      "variant": "dashed"
+    },
+    {
+      "id": "writer-to-exports",
+      "from": "writer",
+      "to": "exports",
+      "label": "write reports",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Interactive Frontend & Orchestration",
+      "items": [
+        "Chainlit UI provides real-time WebSocket progress tracking, stage badges, and action callbacks",
+        "LangGraph StateGraph manages sequential agent transitions and state recovery",
+        "Singleton ProgressCallback emits stage updates to the interactive chat timeline"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Multi-Agent Pipeline & Concurrency",
+      "items": [
+        "ResearchPlanner structures search objectives, targeted queries, and outline sections",
+        "ResearchSearcher dispatches parallel asyncio.gather tasks for web search and content extraction",
+        "CredibilityScorer filters low-quality domains based on institutional authority",
+        "ResearchSynthesizer and ReportWriter compile verified findings with APA/MLA citations"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "External Providers & Security",
+      "items": [
+        "Dynamic LLM factory supports Google Gemini, Groq, OpenAI, and local Ollama / llama.cpp",
+        "DuckDuckGo and Tavily providers queried concurrently without storing provider keys in code",
+        "Target websites crawled via async httpx client with HTTP/2 and BeautifulSoup4 parsing"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Persistence & Infrastructure",
+      "items": [
+        "SqliteSaver persists workflow checkpoints in .cache/checkpoints/ for crash recovery",
+        "File-based cache (.cache/research/) eliminates duplicate searches across 7-day TTL",
+        "Docker container runs as unprivileged appuser (UID 10001) exposing port 8000",
+        "Exported reports saved to host volume in Markdown, styled HTML, and Plain Text"
+      ]
+    }
+  ]
+}

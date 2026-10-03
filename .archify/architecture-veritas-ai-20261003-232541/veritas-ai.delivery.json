@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "e048185d-f998-490d-a380-6ea3431e8d2f",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\candidate.json",
+  "output": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\veritas-ai.html",
+  "specification": {
+    "sha256": "16d251a0c0b97c0d7d4f0a60c13993ebff57c4d359c7708c4426191accbc08c3",
+    "bytes": 11417
+  },
+  "artifact": {
+    "sha256": "1fb9ba2302bbd0e1914fe8ab4d9c1070b623885867804c45aefd0c1a1336a64a",
+    "bytes": 792188
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\candidate.json",
+    "sha256": "6080f385dff9bf054ec665f65db4d2701cba8369c379d86c3122ccdf76aaca22",
+    "bytes": 11417
+  },
+  "artifact": {
+    "path": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\veritas-ai.html",
+    "sha256": "1fb9ba2302bbd0e1914fe8ab4d9c1070b623885867804c45aefd0c1a1336a64a",
+    "bytes": 792188
+  },
+  "gates": {
+    "validate": "fail",
+    "deliver": "not-run",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "validate",
+  "diagnostics": [
+    {
+      "code": "composition/label-gap",
+      "severity": "error",
+      "message": "Label \"chat & action events\" has only 70px between \"ui\" and \"server\"; it needs at least 122px to stay beside its route — increase that clear gap or place the connected nodes on another readable row, preserving the label.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "id": "ui-to-server",
+        "from": "ui",
+        "to": "server"
+      },
+      "evidence": {
+        "clearGapPx": 70,
+        "minimumGapPx": 122,
+        "labelWidthPx": 106,
+        "obstacles": [
+          "ui",
+          "server"
+        ]
+      },
+      "supportedFixes": [
+        "increase the clear gap between the connected nodes to at least 122px",
+        "reposition the connected nodes together while preserving the full relationship label"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\review-2\\veritas-ai.finalize.json",
+    "summaryReceipt": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\review-2\\veritas-ai.finalize-summary.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.0.1",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-03T17:33:16.033Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1209,
+  "nextAction": {
+    "action": "edit-in-place",
+    "candidate": "C:\\Users\\anupb\\Documents\\Project\\VeritasAI\\.archify\\architecture-veritas-ai-20261003-232541\\candidate.json",
+    "constraint": "Preserve all semantics and user-fixed geometry. Use references/architecture-layout-repair.md to choose a local repair or connected-scene reflow; edit the existing candidate.",
+    "then": "finalize-once"
+  }
+}

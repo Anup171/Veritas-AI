@@ -20,3 +20,7 @@ venv/
 .cache/
 .files/
 outputs/
+
+# Dependencies
+node_modules/
+**/node_modules/
